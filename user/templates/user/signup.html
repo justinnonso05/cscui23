@@ -1,0 +1,274 @@
+{% extends "main/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+	<style type="text/css">
+		div.slide-container {
+			position: relative;
+			margin: 0px;
+			height: 60vh;
+			max-width: 1000px;
+			/*margin-top: 10px;*/
+		}
+		@media only screen and (min-width: 800px) {
+			div.slide-container {
+				position: relative;
+				margin: 0px;
+				height: 75vh;
+				/*margin-top: 10px;*/
+			}
+		}
+		div.slides {
+			height: 100%;
+			display: flex;
+		}
+		div.slide {
+			/*display: none;*/
+			flex: 0 0 100%;
+			opacity: 0;
+			transition: opacity 1s ease;
+			height: 100%
+		}
+		.fade {
+			opacity: 1;
+		}
+		div.slide img {
+			width: 100%;
+			height: 100%;
+			/*object-fit: contain;*/
+		}
+		a.prev, a.next {
+			cursor: pointer;
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			padding: 16px;
+			color: white;
+			font-weight: 900;
+			font-size: 20px;
+			z-index: 1;
+		}
+		a.prev {
+			left: 0;
+		}
+		a.next {
+			right: 0;
+		}
+
+		body {
+/*			background: linear-gradient(to bottom, rgb(220, 220, 220), rgb(238, 238, 238));*/
+
+		}
+
+		div.bottom-nav {
+			display: none;
+		}
+		header {
+			padding-left: 10px;
+			border: none;
+			position: absolute;
+			width: 100%;
+			top: 0;
+			background: transparent;
+			/*background: rgb(23, 80, 164);
+			box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);*/
+		}
+		div.content {
+			background: transparent;
+			padding: 0px;
+			margin: 0px;
+			display: grid;
+			grid-template-columns: repeat(1, 1fr);
+		}
+		div.menu {
+			display: none;
+		}
+		div.right-side {
+			display: none;
+		}
+		div.nav-no-logged {
+			position: relative;
+			left: 50px;
+		}
+		div.nav-no-logged i {
+			color: black;
+			font-size: 25px;
+
+		}
+		@media only screen and (min-width: 800px) {
+			div.nav-no-logged, div.nav-logged {
+				display: none;
+			}
+
+		}
+
+		nav div.nav-home {
+			margin-top: 5px;
+			display: block;
+			color: black;
+		}
+	/*.......................*/
+		
+/*.........................*/
+		@media only screen and (max-width: 800px) {
+			nav div.nav-home {
+				display: none;
+			}
+			div.nav-no-logged div.menu {
+				display: flex;
+				position: fixed;
+				padding: 10px;
+				top: 0px;
+				padding-top: 30px;
+				right: -40vw;
+				width: 40vw;
+				color: black;
+				background-color: rgb(210, 210, 210);
+				height: 100vh;
+			}
+			
+			div.nav-no-logged div.menu ul {
+				list-style: none;
+			}
+			div.nav-no-logged div.menu ul li {
+				padding-bottom: 27px;
+			}
+
+		}
+		nav div.nav-home ul {
+			display: inline-flex;
+			text-decoration: none;
+			list-style: none;
+		}
+		nav div.nav-home ul * {
+			margin-left: 20px;
+			transition: .5s;
+			padding: 5px;
+			border-radius: 5px;
+		}
+		nav div.nav-home ul *:hover {
+			background-color: rgba(0, 0, 0, .1);
+			cursor: pointer;
+		}
+		nav div.nav-home ul li.login {
+			box-shadow: 0px 0px 1px 1px gray;
+		}
+		div.home-intro {
+			height: auto;
+			width: 100vw;
+			display: grid;
+			grid-template-columns: repeat(1, 1fr);
+		}
+		@media only screen and (max-width: 800px) {
+			div.home-intro {
+				display: flex;
+				flex-direction: column;		
+			}
+
+		}
+		/*div.home-intro img {
+			width: 100%;
+			height: 100%;
+		}*/
+		div.intro-text {
+			text-align: left;
+			align-content: center;
+			color: black;
+			height: 100%;
+			width: 100%;
+			padding-right: 50px;
+			font-size: 17px;
+			font-weight: 600;
+		}
+		@media only screen and (max-width: 800px) {
+			div.intro-text {
+				padding-right: 0px;
+				padding: 4%;
+			}
+		/*	img.home-intro-img {
+				margin-top: 0px;
+			}*/
+			div.intro-text h3 {
+				text-align: center;
+				font-weight: 700;
+			}
+		}
+	</style>
+	
+	
+	<div class="home-intro">
+		<div class="slide-container">
+			<div class="slides">
+				<div class="slide fade">
+					<img class="home-intro-img" src="{% static 'main/DSC_0787.jpg' %}">
+				</div>
+				<div class="slide">
+					<img class="home-intro-img" src="{% static 'main/intro.png' %}">
+				</div>
+				<div class="slide">
+					<img class="home-intro-img" src="{% static 'main/bg2.jpg' %}">
+				</div>
+				<div class="slide">
+					<img class="home-intro-img" src="{% static 'main/bg200.jpg' %}">
+				</div>
+			</div>
+			<a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+			<a class="next" onclick="plusSlides(1)">&#10095;</a>
+		</div>
+		<div class="intro-text">
+			<h3>Welcome to Here</h3>
+			<p>Welcome to our university's computer science class! We're a dynamic group of students passionate about exploring the world of technology.</p><p>From programming basics to advanced topics like AI and cybersecurity, we're eager to learn and innovate. Guided by dedicated professors, we're shaping the future of computing. Join us on this exciting journey!</p>
+		</div>
+	</div>
+	<div class="about">About</div>
+
+	<script type="text/javascript">
+		// function show() {
+		//   document.getElementById('menu').classList.add('active')
+		//   document.getElementById('bars').classList.add('active')
+		// };
+		// document.getElementById("times").onclick = function() {
+		//   document.getElementById('menu').classList.remove('active')
+		//   document.getElementById('bars').classList.remove('active')
+		// };
+
+		let slideIndex = 0;
+		let autoSlideTimer;
+
+		showSlides();
+
+		function plusSlides(n) {
+			slideIndex += n;
+			showSlides()
+		}
+
+		function currentSlide(n) {
+			slideIndex = n;
+			showSlides()
+		}
+
+		function showSlides() {
+			const slides = document.querySelectorAll(".slide");
+			const slideWidth = slides[0].offsetWidth;
+
+			if (slideIndex >= slides.length) {slideIndex = 0}
+			if (slideIndex < 0) {slideIndex = slides.length - 1}
+
+			
+			for (let i = 0; i<slides.length; i++) {
+				if (i === slideIndex) {
+					slides[i].classList.add('fade');
+				}else {
+					slides[i].classList.remove('fade');
+				}
+			}
+			// slides[slideIndex].style.display = "block";
+		
+
+			clearTimeout(autoSlideTimer);
+			autoSlideTimer = setTimeout(function() {
+				plusSlides(1)
+			}, 3500);
+		}
+	</script>
+{% endblock content %}

@@ -1,0 +1,204 @@
+{% extends "main/base.html" %}
+{% load static %}
+	{% block content %}
+	<style type="text/css">
+		div.share label {
+			cursor: pointer;
+		}
+	  #copy_link:hover {
+	  	cursor: pointer;
+	  }
+		div.likes {
+			margin-top: -10px;
+		}
+		form.like button {
+			background-color: transparent;
+			border: none;
+			cursor: pointer;
+			outline: none;
+		}
+		p.bio-edit a {
+			background: transparent;
+			color: rgb(23, 80, 164);
+			font-size: 15px;
+			padding: 0px;
+		}
+		a.p_link {
+			color: rgb(23, 80, 164);
+		}
+		img.verified {
+			width: 19px;
+			height: auto;
+			margin-left: 4px;
+		}
+		div.posts {
+			display: grid;
+			grid-template-columns: repeat(1, 1fr);
+/*			margin-top: 12px;*/
+			border-radius: 3px;
+/*			background-color: white;*/
+			box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.05);
+			padding: 10px;
+		}
+		
+		div.post-image {
+			width: 100%;
+			display: grid;
+			margin-bottom: 10px;
+			box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, .2);
+			grid-template-columns: repeat(1, 1fr);
+			align-items: center;
+			text-align: center;
+			justify-content: center;
+			justify-items: center;
+		}
+		div.profile-posts {
+			padding: 0px 8px;
+		}
+		div.profile-posts h4 {
+			font-size: 20px;
+			font-weight: 700;
+			margin: 15px 0px;
+		}
+		div.post-image img {
+			max-width: 100%;
+		}
+		@media only screen and (max-width: 800px) {
+			div.content {
+				grid-template-columns: repeat(1, 1fr);
+			}
+			div.menu.active {
+				display: block;
+			}
+			div.menu {
+				display: none;
+				position: static;
+/*				width: 100px;*/
+			}
+			#allPosts.active {
+				display: none;
+			}
+			div.profile-container {
+				padding: 0px 0px;
+				scrollbar-width: 0px;
+    		scrollbar-color: transparent transparent;
+			}
+		}
+	</style>
+	<div class="profile-container" id="allPosts">
+		<div class="profile-content">
+			<div class="profile-cover">
+				{% if profile.Profile_picture %}
+				<img class="profile-image" src="{{ profile.Profile_picture.url }}">
+				{% else %}
+				<img class="profile-image" src="{% static 'main/default.jpg' %}">
+				{% endif %}
+			</div>
+			<div class="profile-info">
+				<div class="profile-name">
+					<p class="profile-name">
+						{{ profile.full_name}}
+						{% if request.user.is_authenticated and request.user == profile.user %}<a href="{% url 'edit-profile' username=request.user.username %}">Edit</a>{% endif %}
+					</p><br>
+					{% if profile.bio != "" %}
+					<p class="bio">{{ profile.bio }}</p>
+					{% else %}
+					{% if request.user.is_authenticated and request.user == profile.user %}<p class="bio-edit"><a href="{% url 'edit-profile' username=request.user.username %}">Add Bio</a></p>{% endif %}
+					{% endif %}
+				</div><hr>
+				<div class="sub-profile-info">
+					<!-- <p class="conections">500 connections</p> -->
+					{% if profile.current_city != None %}
+					<p class="location"><i class="fa fa-map-marker"></i>{{ profile.current_city }}</p>
+					{% else %}
+					{% if request.user.is_authenticated and request.user == profile.user %}<p class="location"><i class="fa fa-map-marker"></i><a style="color: rgb(23, 80, 164);" href="{% url 'edit-profile' username=request.user.username %}">Add Location</a></p>{% endif %}
+					{% endif %}
+					{% if profile.tech_stack != None %}
+					<p class="tech-stack"><i class="fa fa-code"></i>{{ profile.tech_stack }}</p>
+					{% else %}
+					{% if request.user.is_authenticated and request.user == profile.user %}<p class="tech-stack"><i class="fa fa-code"></i><a style="color: rgb(23, 80, 164);" href="{% url 'edit-profile' username=request.user.username %}">Add Tech Stack</a></p>{% endif %}
+					{% endif %}
+					{% if profile.Website_or_Portfolio_link != None %}
+					<p class="weblink"><i class="fa fa-link"></i><a href="{{ profile.Website_or_Portfolio_link }}" target="_blank">{{ profile.Website_or_Portfolio_link }}</a></p><hr> 
+					{% else %}
+					{% if request.user.is_authenticated and request.user == profile.user %}<p class="weblink"><i class="fa fa-link"></i><a style="color: rgb(23, 80, 164);" href="{% url 'edit-profile' username=request.user.username %}">Add Portfolio or social link</a></p>{% endif %}
+					{% endif %}
+				</div>
+			</div>
+			<div class="profile-posts">
+				<h4>Posts</h4>
+				{% for post in posts %}
+					<div class="posts" id="current-post-{{ post.pk }}">
+						<div class="author">
+							{% if post.author.Profile_picture %}
+								<a href="{% url 'user-profile' post.author.user.username %}"><img src="{{ post.author.Profile_picture.url }}"></a><h2 class="author"><a class="post-author" href="{% url 'user-profile' post.author.user.username %}">{{ post.author.full_name }}{% if post.author.verified %}<img class="verified" src="{% static 'main/verified.png' %}">{% endif %}</a><br><span class="date">{{ post.date_posted }}</h2>
+							{% else %}
+								<a href="{% url 'user-profile' post.author.user.username %}"><img src="{% static 'main/default.jpg' %}"></a><h2 class="author"><a class="post-author" href="{% url 'user-profile' post.author.user.username %}">{{ post.author.full_name }}{% if post.author.verified %}<img class="verified" src="{% static 'main/verified.png' %}">{% endif %}</a><br><span class="date">{{ post.date_posted }}</h2>
+							{% endif %}
+						</div>
+						<!-- <hr class="post"> -->
+						<p class="content">{{ post.content|linebreaksbr }}</p>
+						{% if post.Post_image %}
+							<div class="post-image"><img class="post-image" src="{{ post.Post_image.url }}"></div>
+						{% endif %}<hr>
+						<div class="likes">
+							{% if post.total_likes == 1 or post.total_likes == 0 %}
+								<label>{{ post.total_likes }} Like</label>
+							{% else %}
+								<label>{{ post.total_likes }} Likes</label>
+							{% endif %}
+						</div><hr>
+						<div class="comment">
+							<div class="like">
+								<form class="like" action="{% url 'like-post' post.id %}?next={{ request.path }}#current-post-{{ post.pk }}" method="POST">
+									{% csrf_token %}
+									{% if user.is_authenticated %}
+										{% if user in post.likes.all %}
+											<button type="submit" style="background-color: rgba(23, 80, 164, .43) !important; border-radius: 10px; padding: 5px 7px 3px 7px;"><img src="{% static 'main/like.png' %}">&nbsp;<label>Unlike</label></button>
+										{% else %}
+											<button type="submit"><img src="{% static 'main/like.png' %}">&nbsp;<label>Like</label></button>
+										{% endif %}
+									{% endif %}
+								</form>
+							</div>
+							<div><a class="comment" href="{% url 'post-detail' pk=post.pk username=post.author.user.username %}"><img src="{% static 'main/comment.png' %}">&nbsp;<label>Comment</label></a></div>
+							<div class="share" id="copy_link" onclick='copy("http://127.0.0.1:8000/posts/{{ post.pk }}/{{ post.author.user.username }}", "{{ post.pk }}")'>
+							<img src="{% static 'main/share.png' %}">&nbsp;<label><input type="text" value="" id="urlCopy" style="display: none;">Copy</label><span class="urlAlert" id="urlAlert-{{ post.pk }}">Link copied!</span>
+						</div>		
+						</div>
+						<div class="comment-dark">
+							<div class="like">
+								<form class="like" action="{% url 'like-post' post.id %}?next={{ request.path }}#current-post-{{ post.pk }}" method="POST">
+									{% csrf_token %}
+									{% if user.is_authenticated %}
+										{% if user in post.likes.all %}
+											<button type="submit" style="background-color: rgba(23, 80, 164, .43) !important; border-radius: 10px; padding: 5px 7px 3px 7px;"><img src="{% static 'main/like-light.png' %}">&nbsp;<label>Unlike</label></button>
+										{% else %}
+											<button type="submit"><img src="{% static 'main/like-light.png' %}">&nbsp;<label>Like</label></button>
+										{% endif %}
+									{% endif %}
+								</form>
+							</div>
+							<div><a class="comment" href="{% url 'post-detail' pk=post.pk username=post.author.user.username %}"><img src="{% static 'main/comment-light.png' %}">&nbsp;<label>Comment</label></a></div>
+							<div class="share" id="copy_link" onclick='copy("http://127.0.0.1:8000/posts/{{ post.pk }}/{{ post.author.user.username }}", "{{ post.pk }}")'>
+							<img src="{% static 'main/share-light.png' %}">&nbsp;<label><input type="text" value="" id="urlCopy" style="display: none;">Copy</label><span class="urlAlert1" id="urlAlert1-{{ post.pk }}">Link copied!</span>
+						</div>
+						</div>
+					</div>
+				{% empty %}
+					<p>No Posts to see</p>
+				{% endfor %}
+			</div>
+		</div>
+		<script type="text/javascript">
+			var topProfile = document.getElementById('top-profile');
+			var allPosts = document.getElementById('allPosts');
+			var menu = document.getElementById('menu');
+
+			topProfile.addEventListener('click', () => {
+				menu.classList.toggle('active')
+				allPosts.classList.toggle('active')
+			});
+		</script>
+	</div>
+	{% endblock content%}
